@@ -1,5 +1,7 @@
 $(function() {
     describe('RSS Feeds', function() {
+        var feedURL;
+        var feedName;
         // This first test was provided by Udacity and tests that the allFeeds object is not empty.
         it('are defined', function() {
             expect(allFeeds).toBeDefined();
@@ -8,20 +10,16 @@ $(function() {
 
         /* This test loops through each feed in the allFeeds object
          * and ensures it has a URL and Name defined and that they are not empty.*/
-        for (var i = 0; i < allFeeds.length; i++) {
-            var feedURL = allFeeds[i].url;
-            var feedName = allFeeds[i].name;
-
-            it('URLs are defined and not empty strings', function() {
+        it('URLs and names are defined and not empty strings', function() {
+            for (var i = 0; i < allFeeds.length; i++) {
+                feedURL = allFeeds[i].url;
+                feedName = allFeeds[i].name;
                 expect(feedURL).toBeDefined();
                 expect(feedURL).not.toBe("");
-            });
-
-            it('Names are defined and not empty strings', function() {
                 expect(feedName).toBeDefined();
                 expect(feedName).not.toBe("");
-            });
-        }
+            }
+        });
     });
 
     describe('The menu', function() {
@@ -29,30 +27,28 @@ $(function() {
 
         // Ensures the menu element is hidden by default. 
         it('Menu is hidden by default', function() {
-            expect($('body').hasClass('menu-hidden')).toBe(true);
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
 
         // This tests for menu visibility when the menu icon is clicked. Got some tips on this via the Udacity forum here (https://discussions.udacity.com/t/menu-link-toggle-question/189577).
         it('Menu changes when clicked', function() {
             toggleMenu.click();
-            expect($('body').hasClass('menu-hidden')).toBe(false);
+            expect($('body').hasClass('menu-hidden')).toBeFalsy();
 
             toggleMenu.click();
-            expect($('body').hasClass('menu-hidden')).toBe(true);
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
     });
 
     describe('Initial Entries', function() {
         // Tests for a at least one entry when the loadFeed is initially called on page load
         beforeEach(function(done) {
-            loadFeed(0, function() {
-                done();
-            });
+            loadFeed(0, done);
         });
 
         it('should load at least one entry', function() {
-            var entry = $('.feed .entry')[0];
-            expect(entry).not.toBe('');
+            var entry = $('.feed .entry').length;
+            expect(entry).toBeGreaterThan(0);
         });
     });
 
@@ -65,7 +61,6 @@ $(function() {
             loadFeed(0, function() {
                 oldFeed = $('.feed .entry').find("h2").first().html();
                 done();
-                console.log(oldFeed);
             });
         });
 
@@ -74,11 +69,9 @@ $(function() {
         it('should load new feed', function(done) {
             loadFeed(1, function() {
                 newFeed = $('.feed .entry').find("h2").first().html();
+                expect(oldFeed).not.toBe(newFeed);
                 done();
-                console.log(newFeed);
-            });
-
-            expect(oldFeed).not.toBe(newFeed);
+            });    
         });
     });
 }());
